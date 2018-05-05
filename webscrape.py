@@ -3,6 +3,7 @@ from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
 
+
 def simple_get(url):
     try:
         with closing(get(url, stream=True)) as resp:
@@ -30,3 +31,23 @@ def response_correct(resp):
 def log_e(e):
     print(e)
     # Have it write to txt file later
+
+
+def get_breeds():
+    url = 'http://www.akc.org/dog-breeds/'
+    response = simple_get(url)
+
+    if response is not None:
+        html = BeautifulSoup(response, 'html.parser')
+        breeds = set()
+        for option in html.select('option'):
+            breeds.add(option.text)
+        return list(breeds)
+
+
+if __name__ == '__main__':
+    print('Starting script...')
+    # print(get_breeds())
+    for x in get_breeds():
+        print(x)
+    print('Done')
