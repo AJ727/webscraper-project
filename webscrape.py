@@ -13,7 +13,7 @@ def simple_get(url):
                 return None
 
     except RequestException as e:
-        log_e("Error during requests to {0} : {1}".format(url, str(e)))
+        log_error("Error during requests to {0} : {1}".format(url, str(e)))
         return None
 
 
@@ -28,26 +28,29 @@ def response_correct(resp):
             and content_type.find('html') > -1)
 
 
-def log_e(e):
-    print(e)
-    # Have it write to txt file later
+def log_error(e):
+    # Write errors to log named log.txt
+    with open('log.txt', 'w') as f:
+        f.writelines(e)
 
 
-def get_breeds():
+def get_items():
     url = 'http://www.akc.org/dog-breeds/'
     response = simple_get(url)
-
+    # If there is a response, parse the html, and for each <option> element, add it's content to an array
     if response is not None:
         html = BeautifulSoup(response, 'html.parser')
-        breeds = set()
+        items = set()
         for option in html.select('option'):
-            breeds.add(option.text)
-        return list(breeds)
+            items.add(option.text)
+        return sorted(list(items))
 
 
 if __name__ == '__main__':
     print('Starting script...')
+    print('-=-=-=-=-=-=-=-=-=-=-=-=-=-')
     # print(get_breeds())
-    for x in get_breeds():
+    for x in get_items():
         print(x)
+    print('-=-=-=-=-=-=-=-=-=-=-=-=-=-')
     print('Done')
